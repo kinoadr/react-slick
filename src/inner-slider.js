@@ -38,10 +38,28 @@ export var InnerSlider = createReactClass({
     this.setState({
       mounted: true
     });
-    var lazyLoadedList = [];
-    for (var i = 0; i < React.Children.count(this.props.children); i++) {
-      if (i >= this.state.currentSlide && i < this.state.currentSlide + this.props.slidesToShow) {
+    let lazyLoadedList = [];
+    // number of slides shown in the active frame
+    const slidesToShow = this.props.slidesToShow;
+    const childrenLen = React.Children.count(this.props.children);
+    const currentSlide = this.state.currentSlide;
+    for (let i = 0; i < childrenLen; i++) {
+      // if currentSlide is the lastSlide of current frame and 
+      // rest of the active slides are on the left of currentSlide
+      // then the following might cause a problem
+      if (i >= currentSlide && i < currentSlide + slidesToShow) {
         lazyLoadedList.push(i);
+      }
+    }
+    if (this.props.centerMode === true) {
+      // add slides to show on the left in case of centerMode with lazyLoad
+      let additionalCount = Math.floor(slidesToShow / 2);
+      if (parseInt(this.props.centerPadding) > 0) {
+        additionalCount += 1;
+      }
+      let additionalNum = currentSlide;
+      while(additionalCount--){
+        lazyLoadedList.push((--additionalNum + childrenLen) % childrenLen)
       }
     }
 
@@ -196,13 +214,13 @@ export var InnerSlider = createReactClass({
     var centerPaddingStyle = null;
 
     if (this.props.vertical === false) {
-      if (this.props.centerMode === true) {
+      if (this.props.centerMode === true || this.props.centerMode === 'custom') {
         centerPaddingStyle = {
           padding: ('0px ' + this.props.centerPadding)
         };
       }
     } else {
-      if (this.props.centerMode === true) {
+      if (this.props.centerMode === true || this.props.centerMode === 'custom') {
         centerPaddingStyle = {
           padding: (this.props.centerPadding + ' 0px')
         };

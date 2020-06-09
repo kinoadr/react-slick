@@ -20,9 +20,12 @@ export var getTrackCSS = function(spec) {
   if (!spec.vertical) {
     if (spec.variableWidth) {
       trackWidth = (spec.slideCount + 2*spec.slidesToShow) * spec.slideWidth;
-    } else if (spec.centerMode) {
+    } else if (spec.centerMode === true) {
       trackWidth = (spec.slideCount + 2*(spec.slidesToShow + 1)) * spec.slideWidth;
-    } else {
+    } else if (spec.centerMode === 'custom') {
+      trackWidth = getTotalSlides(spec) * spec.slideWidth;
+    }
+    else {
       trackWidth = (spec.slideCount + 2*spec.slidesToShow) * spec.slideWidth;
     }
   } else {
@@ -110,15 +113,15 @@ export var getTrackLeft = function (spec) {
       }
     }
   }
-
-
-
-  if (spec.centerMode) {
+  if (spec.centerMode === true) {
     if(spec.infinite) {
       slideOffset += spec.slideWidth * Math.floor(spec.slidesToShow / 2);
     } else {
       slideOffset = spec.slideWidth * Math.floor(spec.slidesToShow / 2);
     }
+  }
+  if (spec.centerMode === 'custom') {
+    slideOffset = 0;
   }
 
   if (!spec.vertical) {
@@ -151,3 +154,15 @@ export var getTrackLeft = function (spec) {
 
   return targetLeft;
 };
+
+export function getPreClones(spec){
+  return spec.slidesToShow + (spec.centerMode ? 1: 0)
+}
+
+export function getPostClones(spec){
+  return spec.slideCount
+}
+
+export function getTotalSlides(spec){
+  return getPreClones(spec) + spec.slideCount + getPostClones(spec)
+}

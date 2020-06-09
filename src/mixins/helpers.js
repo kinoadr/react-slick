@@ -109,22 +109,16 @@ var helpers = {
     }
   },
   canGoNext: function (opts){
-    var canGo = true;
+    let canGo = true
     if (!opts.infinite) {
-      if (opts.centerMode) {
-        // check if current slide is last slide
-        if (opts.currentSlide >= (opts.slideCount - 1)) {
-          canGo = false;
-        }
-      } else {
-        // check if all slides are shown in slider
-        if (opts.slideCount <= opts.slidesToShow ||
-          opts.currentSlide >= (opts.slideCount - opts.slidesToShow)) {
-          canGo = false;
-        }
+      if (opts.centerMode && opts.currentSlide >= opts.slideCount - 1) {
+        canGo = false
+      } else if (opts.slideCount <= opts.slidesToShow ||
+        opts.currentSlide >= opts.slideCount - opts.slidesToShow) {
+        canGo = false
       }
     }
-    return canGo;
+    return canGo
   },
   slideHandler: function (index) {
     // Functionality of animateSlide and postSlide is merged into this function
